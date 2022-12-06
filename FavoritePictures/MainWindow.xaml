@@ -1,0 +1,95 @@
+﻿<Window x:Class="FavoritePictures.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FavoritePictures"
+        mc:Ignorable="d"
+        Title="Favorite Pictures by Marcin Junka" Height="450" Width="800">
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0">
+            
+            <Grid VerticalAlignment="Top" Height="20" Grid.ColumnSpan="2" >
+                <Menu >
+                    <MenuItem Header="File" >
+                        <MenuItem x:Name="menuNew" Header="New"/>
+                        <Separator/>
+                        <MenuItem x:Name="menuOpenFrom" Header="Open from" Click="menuOpenFrom_Click"/>
+                        <Separator/>
+                        <MenuItem x:Name="menuSaveAs" Header="Save as" Click="menuSaveAs_Click"/>
+                        <Separator/>
+                        <MenuItem x:Name="Exit" Header="Exit"/>
+                    </MenuItem>
+                </Menu>
+            </Grid>
+
+            <!--Name grid-->
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Name" Grid.Column="0"/>
+                <TextBox x:Name="txtName" Grid.Column="1"/>
+            </Grid>
+
+            <!--URL grid-->
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="4*"/>
+                </Grid.ColumnDefinitions>
+                <RadioButton Content="URL" Grid.Column="0" />
+                <RadioButton Content="File" Grid.Column="1" />
+                <TextBox x:Name="txtURL" Grid.Column="3"/>
+            </Grid>
+
+            <!--description grid-->
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Description" Grid.Column="0"/>
+                <TextBox x:Name="txtDescription" Grid.Column="1"/>
+            </Grid>
+            
+            <!--Button-->
+            <Button x:Name="btnAdd" Content="Add" Height="20" Margin="5" Click="btnAdd_Click"/>
+
+            <!--Listbox-->
+            <Label Content="List of your pictures" HorizontalAlignment="Center"/>
+            <Grid>
+                <ListBox x:Name="lstPictures" Height="230" Margin="5" SelectionChanged="ListView_SelectionChanged">
+                    <!--put template here-->
+                </ListBox>
+            </Grid>
+
+        </StackPanel>
+        <!--Picture stackpanel-->
+        <StackPanel Background="#22413939" Grid.Column="1">
+            <Image x:Name="imgBox" Margin="10" Stretch="Fill"/>
+        </StackPanel>
+        
+    </Grid>
+</Window>
+    
+    
+    
+    
+<!--<ListView.View>
+                        <GridView>
+                            <GridView.Columns>
+                                <GridViewColumn Header="Name" Width="auto" />
+                                <GridViewColumn Header="URL" Width="auto"/>
+                                <GridViewColumn Header="Description" Width="auto"/>
+                            </GridView.Columns>
+                        </GridView>
+                    </ListView.View>-->

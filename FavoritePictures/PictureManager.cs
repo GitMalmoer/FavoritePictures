@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace FavoritePictures
 {
@@ -34,7 +35,10 @@ namespace FavoritePictures
 
         public Picture GetPictureFromList(int index)
         {
-            return pictureList[index];
+            if (CheckIndex(index))
+                return pictureList[index];
+            else
+                return null;
         }
 
         public bool SaveToTxt()
@@ -55,6 +59,19 @@ namespace FavoritePictures
         public void ReadFromTxt()
         {
             pictureList = fileManager.ReadFromTxt(pictureList);
+        }
+
+        public bool CheckIndex(int index)
+        {
+            if(index > -1)
+            {
+                return true;
+            }
+            else
+            {
+                //MessageBox.Show("Wrong index");
+                return false;
+            }
         }
 
     }

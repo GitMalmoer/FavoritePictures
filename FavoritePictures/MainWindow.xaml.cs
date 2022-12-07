@@ -29,8 +29,19 @@ namespace FavoritePictures
         {
             InitializeComponent();
             //InitializePicture("http://cdn.differencebetween.net/wp-content/uploads/2012/01/Difference-Between-Example-and-Sample.jpg");
+            //imgBox.Source = InitializePicture(@"C:\Users\Marcin\Desktop\WAZNE\PANJUNKA.png");
+            InitializeGUI();
+
+            
+
+
         }
 
+        private void InitializeGUI()
+        {
+            radioUrl.IsChecked = true;
+            btnAddFile.IsEnabled = false;
+        }
         public BitmapImage InitializePicture(string url)
         {
             BitmapImage bitmapImage = new BitmapImage();
@@ -52,17 +63,25 @@ namespace FavoritePictures
         {
             Picture picture = new Picture(txtName.Text,txtURL.Text,txtDescription.Text);
             pictureManager.AddPictureToList(picture);
-
             PopulateList();
+            
 
         }
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            int index = lstPictures.SelectedIndex;
-            Picture picture = pictureManager.GetPictureFromList(index);
+            if (lstPictures.SelectedIndex > -1)
+            {
+                int index = lstPictures.SelectedIndex;
 
-            var pictureBitmap = InitializePicture(picture.Url);
+                Picture picture = pictureManager.GetPictureFromList(index);
+
+                var pictureBitmap = InitializePicture(picture.Url);
+
+                imgBox.Source = pictureBitmap;
+            }
+
+
 
         }
 
@@ -87,6 +106,34 @@ namespace FavoritePictures
                     Picture picture = pictureManager.GetPictureFromList(i);
                     lstPictures.Items.Add(string.Format("{0,30} {1,30} {2,30}", picture.Name, picture.Url, picture.Description));
                 }
+            }
+        }
+
+        private void radioFile_Checked(object sender, RoutedEventArgs e)
+        {
+            if (radioUrl.IsChecked == true)
+            {
+                txtURL.IsEnabled = true;
+                btnAddFile.IsEnabled = false;
+            }
+            else
+            {
+                txtURL.IsEnabled = false;
+                btnAddFile.IsEnabled = true;
+            }
+        }
+
+        private void radioUrl_Checked(object sender, RoutedEventArgs e)
+        {
+            if (radioUrl.IsChecked == true)
+            {
+                txtURL.IsEnabled = true;
+                btnAddFile.IsEnabled = false;
+            }
+            else
+            {
+                txtURL.IsEnabled = false;
+                btnAddFile.IsEnabled = true;
             }
         }
     }

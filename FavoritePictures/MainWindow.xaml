@@ -46,12 +46,21 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="4*"/>
                 </Grid.ColumnDefinitions>
-                <RadioButton Content="URL" Grid.Column="0" />
-                <RadioButton Content="File" Grid.Column="1" />
+                <RadioButton x:Name="radioUrl" GroupName="grpUrl"  Content="URL" Grid.Column="0" Height="18" VerticalAlignment="Top" Checked="radioUrl_Checked" />
                 <TextBox x:Name="txtURL" Grid.Column="3"/>
             </Grid>
 
-            <!--description grid-->
+            <!--File grid-->
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <RadioButton x:Name="radioFile" GroupName="grpUrl" Content="File" Grid.Column="0" Checked="radioFile_Checked" />
+                <Button x:Name="btnAddFile" Content="Add File" Grid.Column="1"  Height="20" Width="80" HorizontalAlignment="Left"/>
+            </Grid>
+
+                <!--description grid-->
             <Grid Margin="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>

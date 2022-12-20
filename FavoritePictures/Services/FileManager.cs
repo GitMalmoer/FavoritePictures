@@ -27,7 +27,7 @@ namespace FavoritePictures.Services
             try
             {
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
-                saveFileDialog.Filter = "|*.txt|All files (*.*)|*.*";
+                saveFileDialog.Filter = "(*.txt)|*.txt|All Files (*.*)|*.*";
                 saveFileDialog.InitialDirectory = path;
 
                 if (saveFileDialog.ShowDialog() == true)
@@ -86,7 +86,7 @@ namespace FavoritePictures.Services
             try
             {
                 OpenFileDialog openFileDialog = new OpenFileDialog();
-                openFileDialog.Filter = "|*.txt|All files (*.*)|*.*";
+                openFileDialog.Filter = "(*.txt)|*.txt|All Files (*.*)|*.*";
                 openFileDialog.InitialDirectory = Environment.CurrentDirectory;
 
                 if (openFileDialog.ShowDialog() == true)

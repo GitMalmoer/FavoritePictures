@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FavoritePictures"
         mc:Ignorable="d"
-        Title="Favorite Pictures by Marcin Junka" Height="450" Width="800">
+        Title="Favorite Pictures by Marcin Junka" Height="500" Width="800">
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -18,13 +18,13 @@
             <Grid VerticalAlignment="Top" Height="20" Grid.ColumnSpan="2" >
                 <Menu >
                     <MenuItem Header="File" >
-                        <MenuItem x:Name="menuNew" Header="New"/>
+                        <MenuItem x:Name="menuNew" Header="New" Click="menuNew_Click" />
                         <Separator/>
                         <MenuItem x:Name="menuOpenFrom" Header="Open from" Click="menuOpenFrom_Click"/>
                         <Separator/>
                         <MenuItem x:Name="menuSaveAs" Header="Save as" Click="menuSaveAs_Click"/>
                         <Separator/>
-                        <MenuItem x:Name="Exit" Header="Exit"/>
+                        <MenuItem x:Name="Exit" Header="Exit" Click="Exit_Click"/>
                     </MenuItem>
                 </Menu>
             </Grid>
@@ -57,7 +57,7 @@
                     <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
                 <RadioButton x:Name="radioFile" GroupName="grpUrl" Content="File" Grid.Column="0" Checked="radioFile_Checked" />
-                <Button x:Name="btnAddFile" Content="Add File" Grid.Column="1"  Height="20" Width="80" HorizontalAlignment="Left"/>
+                <Button x:Name="btnAddFile" Content="Add File" Grid.Column="1"  Height="20" Width="80" HorizontalAlignment="Left" Click="btnAddFile_Click"/>
             </Grid>
 
                 <!--description grid-->
@@ -76,11 +76,11 @@
             <!--Listbox-->
             <Label Content="List of your pictures" HorizontalAlignment="Center"/>
             <Grid>
-                <ListBox x:Name="lstPictures" Height="230" Margin="5" SelectionChanged="ListView_SelectionChanged">
+                <ListBox x:Name="lstPictures" Height="230" Margin="5" SelectionChanged="ListView_SelectionChanged" ScrollViewer.HorizontalScrollBarVisibility="Visible">
                     <!--put template here-->
                 </ListBox>
             </Grid>
-
+            <Button Width="80" Height="20" Content="Delete" Click="Button_Delete_Click"/>
         </StackPanel>
         <!--Picture stackpanel-->
         <StackPanel Background="#22413939" Grid.Column="1">

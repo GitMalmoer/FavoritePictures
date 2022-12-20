@@ -38,9 +38,13 @@ namespace FavoritePictures.Services
                     // https://stackoverflow.com/questions/63989894/filestream-the-filename-directory-name-or-volume-label-syntax-is-incorrect
 
                     streamWriter = new StreamWriter(exepath);
+                    
+                    string[] Initialization = { versionToken,pictures.Count.ToString()};
 
-                    streamWriter.WriteLine(versionToken);
-                    streamWriter.WriteLine(pictures.Count);
+                    //streamWriter.WriteLine(versionToken);
+                    //streamWriter.WriteLine(pictures.Count);
+
+                    streamWriter.WriteLine(JsonConvert.SerializeObject(Initialization));
 
 
                     for (int i = 0; i < pictures.Count; i++)
@@ -67,6 +71,7 @@ namespace FavoritePictures.Services
             }
             finally
             {
+                if (saveOk == true)
                 streamWriter.Close();
             }
 
@@ -76,7 +81,7 @@ namespace FavoritePictures.Services
         public List<Picture> ReadFromTxt(List<Picture> pictures)
         {
             List<Picture> InnerPictureList = new List<Picture>();
-
+            bool readOk = false;
             StreamReader streamReader = null;
             try
             {
@@ -103,6 +108,7 @@ namespace FavoritePictures.Services
                         }
                     }
                     MessageBox.Show("Opened file: " + path);
+                    readOk = true;
                 }
 
                 
@@ -112,6 +118,7 @@ namespace FavoritePictures.Services
             }
             finally
             {
+                if(readOk == true)
                 streamReader.Close();
             }
 

@@ -12,6 +12,7 @@ namespace FavoritePictures
     {
         List<Picture> pictureList { set; get; }
         FileManager fileManager = new FileManager();
+        public string PathToFile { get; set; }
 
         public PictureManager()
         {
@@ -28,9 +29,14 @@ namespace FavoritePictures
             pictureList.Add(picture);
         }
 
-        public void RemovePictureFromList(Picture picture)
+        public void RemovePictureFromList(int index)
         {
-            pictureList.Remove(picture);
+            if (CheckIndex(index))
+            {
+                pictureList.Remove(GetPictureFromList(index));
+            }
+            else
+                MessageBox.Show("Wrong selection!");
         }
 
         public Picture GetPictureFromList(int index)

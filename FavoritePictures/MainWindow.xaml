@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FavoritePictures"
         mc:Ignorable="d"
-        Title="Favorite Pictures by Marcin Junka" Height="500" Width="800">
+        Title="Favorite Pictures by Marcin Junka" Height="550" Width="800" KeyDown="Window_KeyDown">
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -18,7 +18,7 @@
             <Grid VerticalAlignment="Top" Height="20" Grid.ColumnSpan="2" >
                 <Menu >
                     <MenuItem Header="File" >
-                        <MenuItem x:Name="menuNew" Header="New" Click="menuNew_Click" />
+                        <MenuItem x:Name="menuNew" Header="New (CTRL + N)" Click="menuNew_Click" />
                         <Separator/>
                         <MenuItem x:Name="menuOpenFrom" Header="Open from" Click="menuOpenFrom_Click"/>
                         <Separator/>
@@ -54,10 +54,12 @@
             <Grid Margin="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <RadioButton x:Name="radioFile" GroupName="grpUrl" Content="File" Grid.Column="0" Checked="radioFile_Checked" />
                 <Button x:Name="btnAddFile" Content="Add File" Grid.Column="1"  Height="20" Width="80" HorizontalAlignment="Left" Click="btnAddFile_Click"/>
+                <Label x:Name="lblPath" Grid.Column="2"/>
             </Grid>
 
                 <!--description grid-->
@@ -69,7 +71,17 @@
                 <Label Content="Description" Grid.Column="0"/>
                 <TextBox x:Name="txtDescription" Grid.Column="1"/>
             </Grid>
-            
+
+            <!--description grid-->
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Album" Grid.Column="0"/>
+                <ComboBox x:Name="cmbAlbum" Grid.Column="1" DropDownOpened="cmbAlbum_DropDownOpened"/>
+            </Grid>
+
             <!--Button-->
             <Button x:Name="btnAdd" Content="Add" Height="20" Margin="5" Click="btnAdd_Click"/>
 
@@ -82,10 +94,44 @@
             </Grid>
             <Button Width="80" Height="20" Content="Delete" Click="Button_Delete_Click"/>
         </StackPanel>
+        
         <!--Picture stackpanel-->
         <StackPanel Background="#22413939" Grid.Column="1">
-            <Image x:Name="imgBox" Margin="10" Stretch="Fill"/>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+            
+                <Image x:Name="imgBox" Margin="10" Stretch="Fill" Grid.ColumnSpan="3" Grid.Row="0" Height="250"/>
+                    
+                <Label Content="Add album" HorizontalAlignment="Center" Grid.Row="1" Grid.Column="1"/>
+                
+                <Label Content="Album Name" Grid.Row="2"/>
+                <TextBox x:Name="txtAlbumName" Grid.Row="2" Grid.Column="1" Margin="0 0 5 0"/>
+                <Button x:Name="btnAlbumName" Content="Add" Grid.Row="2" Grid.Column="3" Margin="0 0 5 0" Click="btnAddAlbumName_Click"/>
+                
+                <ListBox x:Name="lstAlbums" Height="150" Margin="5" VerticalAlignment="Bottom" Grid.ColumnSpan="3" Grid.Row="3" SelectionChanged="lstAlbums_SelectionChanged"/>
+            </Grid>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="btnDeleteAlbum" Grid.Column="1" Height="20" Content="Delete" Click="btnDeleteAlbum_Click"/>
+            </Grid>
+
         </StackPanel>
+
         
     </Grid>
 </Window>

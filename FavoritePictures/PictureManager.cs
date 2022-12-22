@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.RightsManagement;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -10,48 +11,51 @@ namespace FavoritePictures
 {
     public class PictureManager
     {
-        List<Picture> pictureList { set; get; }
         FileManager fileManager = new FileManager();
         public string PathToFile { get; set; }
+        
+        // adding protection level by setting private setter so that it wont be manipulated outside of the class
+        public List<Album> albumList { private set; get; }
+
 
         public PictureManager()
         {
-            pictureList= new List<Picture>();
+            albumList= new List<Album>();
         }
-
-        public int GetPictureListCount()
+        public void RemoveAlbum(int index)
         {
-            return pictureList.Count;
-        }
-
-        public void AddPictureToList(Picture picture)
-        {
-            pictureList.Add(picture);
-        }
-
-        public void RemovePictureFromList(int index)
-        {
-            if (CheckIndex(index))
+            if(CheckIndex(index))
             {
-                pictureList.Remove(GetPictureFromList(index));
+                if (albumList.Contains(albumList[index]))
+                albumList.RemoveAt(index);
+            }
+        }
+            
+
+        public void RemovePictureFromAlbum(int selectedAlbum,int selectedPicture)
+        {
+            if (CheckIndex(selectedAlbum) && CheckIndex(selectedPicture))
+            {
+                albumList[selectedAlbum].Remove(GetPictureFromAlbum(selectedAlbum,selectedPicture));
             }
             else
                 MessageBox.Show("Wrong selection!");
         }
 
-        public Picture GetPictureFromList(int index)
+
+        public Picture GetPictureFromAlbum(int albumindex,int pictureIndex)
         {
-            if (CheckIndex(index))
-                return pictureList[index];
+            if (CheckIndex(albumindex) && CheckIndex(pictureIndex))
+                return albumList[albumindex].GetPictureFromAlbum(pictureIndex);
             else
                 return null;
         }
 
-        public bool SaveToTxt()
+        public bool SaveAlbumToTxt()
         {
             bool saveOk = false;
 
-            if (fileManager.SaveToTxt(pictureList))
+            if (fileManager.SaveAlbumToTxt(albumList))
             {
                 saveOk = true;
             }
@@ -62,9 +66,15 @@ namespace FavoritePictures
 
         }
 
-        public void ReadFromTxt()
+        public void ReadAlbumsFromTxt()
         {
-            pictureList = fileManager.ReadFromTxt(pictureList);
+            albumList = fileManager.ReadAlbumsFromTxt(albumList);
+        }
+
+        public void ClearManager()
+        {
+            PathToFile = string.Empty;
+            albumList.Clear();
         }
 
         public bool CheckIndex(int index)
@@ -75,7 +85,6 @@ namespace FavoritePictures
             }
             else
             {
-                //MessageBox.Show("Wrong index");
                 return false;
             }
         }

@@ -1,0 +1,22 @@
+﻿<Window x:Class="FavoritePictures.ConfirmationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FavoritePictures"
+        mc:Ignorable="d"
+        Title="Close Program Window" Height="150" Width="300">
+    <StackPanel>
+        <Label x:Name="lblMessage" Content="Are you sure you want to quit?" HorizontalAlignment="Center" Margin="0 10 0 0"/>
+        <Grid Margin="0 40 0 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+        
+        <Button x:Name="btnYes" Content="Yes" Margin="5" Click="btnYes_Click"/>
+        <Button x:Name="btnNo" Content="No" Grid.Column="1" Margin="5" Click="btnNo_Click"/>
+            
+        </Grid>
+    </StackPanel>
+</Window>

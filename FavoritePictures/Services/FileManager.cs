@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Security.Policy;
 using System.Text;
 using System.Text.Json.Nodes;
@@ -17,9 +18,9 @@ namespace FavoritePictures.Services
     {
         string path = Environment.CurrentDirectory;
 
-        string versionToken = "PictureAppV1";
-    
-        public bool SaveToTxt(List<Picture> pictures)
+        string versionToken = "PictureAppV3";
+
+        public bool SaveAlbumToTxt(List<Album> albums)
         {
             bool saveOk = false;
             StreamWriter streamWriter = null;
@@ -38,33 +39,43 @@ namespace FavoritePictures.Services
                     // https://stackoverflow.com/questions/63989894/filestream-the-filename-directory-name-or-volume-label-syntax-is-incorrect
 
                     streamWriter = new StreamWriter(exepath);
-                    
-                    string[] Initialization = { versionToken,pictures.Count.ToString()};
 
-                    //streamWriter.WriteLine(versionToken);
-                    //streamWriter.WriteLine(pictures.Count);
+                    //string[] Initialization = { versionToken, pictures.Count.ToString() };
 
-                    streamWriter.WriteLine(JsonConvert.SerializeObject(Initialization));
+                    streamWriter.WriteLine(versionToken);
+                    streamWriter.WriteLine(albums.Count);
+
+                    //streamWriter.WriteLine(JsonConvert.SerializeObject(Initialization));
 
 
-                    for (int i = 0; i < pictures.Count; i++)
+                    for (int i = 0; i < albums.Count; i++)
                     {
-                        var jsonpicture = new Picture()
-                        {
-                            Name = pictures[i].Name,
-                            Url = pictures[i].Url,
-                            Description = pictures[i].Description,
-                        };
+                        streamWriter.WriteLine(albums[i].AlbumName);
+                        streamWriter.WriteLine(albums[i].GetPicturesCount().ToString());
 
-                        var jsonSerializedObj = JsonConvert.SerializeObject(jsonpicture);
-                        streamWriter.WriteLine(jsonSerializedObj);
+                        for (int j = 0; j < albums[i].GetPicturesCount(); j++)
+                        {
+                            var jsonpicture = new Picture()
+                            {
+                                Name = albums[i].GetPictureFromAlbum(j).Name,
+                                Url = albums[i].GetPictureFromAlbum(j).Url,
+                                Description = albums[i].GetPictureFromAlbum(j).Description,
+                            };
+
+                            var jsonSerializedObj = JsonConvert.SerializeObject(jsonpicture);
+                            streamWriter.WriteLine(jsonSerializedObj);
+
+                        }
+                       
+
+                        
                     }
 
                     saveOk = true;
                     MessageBox.Show("File has been saved into: " + exepath);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 MessageBox.Show(e.ToString());
                 saveOk = false;
@@ -72,15 +83,16 @@ namespace FavoritePictures.Services
             finally
             {
                 if (saveOk == true)
-                streamWriter.Close();
+                    streamWriter.Close();
             }
 
             return saveOk;
         }
 
-        public List<Picture> ReadFromTxt(List<Picture> pictures)
+
+        public List<Album> ReadAlbumsFromTxt(List<Album> albums)
         {
-            List<Picture> InnerPictureList = new List<Picture>();
+            List<Album> InnerAlbumList = new List<Album>();
             bool readOk = false;
             StreamReader streamReader = null;
             try
@@ -96,34 +108,49 @@ namespace FavoritePictures.Services
 
                     if (streamReader.ReadLine() == versionToken)
                     {
-                        int numberOfRegisteredPictures = Convert.ToInt32(streamReader.ReadLine());
+                        int numberOfRegisteredAlbums = Convert.ToInt32(streamReader.ReadLine());
 
-                        for (int i = 0; i < numberOfRegisteredPictures; i++)
+                        for (int i = 0; i < numberOfRegisteredAlbums; i++)
                         {
-                            var pictureObject = streamReader.ReadLine();
+                            var albumName = streamReader.ReadLine();
+                            int numberOfRegisteredPictures = Convert.ToInt32(streamReader.ReadLine());
+                            Album album = new Album
+                            {
+                                AlbumName = albumName,
+                            };
+                            
+                            
+                            for (int j = 0; j < numberOfRegisteredPictures; j++)
+                            {
+                                var pictureObject = streamReader.ReadLine();
 
-                            Picture deserializedObject = JsonConvert.DeserializeObject<Picture>(pictureObject);
+                                Picture picture = JsonConvert.DeserializeObject<Picture>(pictureObject);
+                                album.AddPictureToAlbum(picture);
+                            }
 
-                            InnerPictureList.Add(deserializedObject);
+                            InnerAlbumList.Add(album);
+
+
                         }
                     }
                     MessageBox.Show("Opened file: " + path);
                     readOk = true;
                 }
 
-                
+
             }
-            catch(Exception e) {
+            catch (Exception e)
+            {
                 MessageBox.Show(e.ToString());
             }
             finally
             {
-                if(readOk == true)
-                streamReader.Close();
+                if (readOk == true)
+                    streamReader.Close();
             }
 
 
-            return InnerPictureList;
+            return InnerAlbumList;
         }
 
     }

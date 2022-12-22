@@ -36,6 +36,7 @@ namespace FavoritePictures
 
         private void InitializeGUI()
         {
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             radioUrl.IsChecked = true;
             btnAddFile.IsEnabled = false;
         }
@@ -65,16 +66,26 @@ namespace FavoritePictures
         /// </summary>
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            Picture picture = new Picture();
+            AddPicture();
+            
+        }
+
+        private void AddPicture()
+        {
+            int selectedAlbum = cmbAlbum.SelectedIndex;
+
+            
             if (!string.IsNullOrEmpty(txtDescription.Text) && !string.IsNullOrEmpty(txtName.Text))
             {
                 if (radioUrl.IsChecked == true)
                 {
                     if (!string.IsNullOrEmpty(txtURL.Text))
                     {
-                        picture = new Picture(txtName.Text, txtURL.Text, txtDescription.Text);
-                        pictureManager.AddPictureToList(picture);
-                        PopulateList();
+                        AddPictureToPictureManager(selectedAlbum, txtURL.Text);
+                        if(lstAlbums.SelectedIndex > -1 )
+                        {
+                            PopulateList();
+                        }
                     }
                     else
                         MessageBox.Show("You need to add picture URL");
@@ -83,9 +94,11 @@ namespace FavoritePictures
                 {
                     if (!string.IsNullOrEmpty(pictureManager.PathToFile))
                     {
-                        picture = new Picture(txtName.Text, pictureManager.PathToFile, txtDescription.Text);
-                        pictureManager.AddPictureToList(picture);
-                        PopulateList();
+                        AddPictureToPictureManager(selectedAlbum, pictureManager.PathToFile);
+                        if (lstAlbums.SelectedIndex > -1)
+                        {
+                            PopulateList();
+                        }
                     }
                     else
                         MessageBox.Show("Add picture file");
@@ -94,17 +107,38 @@ namespace FavoritePictures
             else
                 MessageBox.Show("Name and Description can not be empty!");
 
-            // setting the saved path to file in manager to empty string
-            pictureManager.PathToFile = string.Empty;
+            
+            
+        }
+
+        private void AddPictureToPictureManager(int selectedAlbum,string uri)
+        {
+            Picture picture = new Picture(txtName.Text, uri, txtDescription.Text);
+            if (pictureManager.albumList.Count > 0 && selectedAlbum > -1)
+            {
+                pictureManager.albumList[selectedAlbum].AddPictureToAlbum(picture);
+                MessageBox.Show("Picture added to album: " + pictureManager.albumList[selectedAlbum].AlbumName);
+                ClearInputs();
+            }
+            else if (pictureManager.albumList.Count <= 0)
+            {
+                MessageBox.Show("You didnt add any album! Create album first!");
+            }
+            else if (selectedAlbum < 0)
+            {
+                MessageBox.Show("You didnt select album in combobox!");
+            }
         }
 
         private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            int selectedAlbum = lstAlbums.SelectedIndex;
+
             if (lstPictures.SelectedIndex > -1)
             {
                 int index = lstPictures.SelectedIndex;
 
-                Picture picture = pictureManager.GetPictureFromList(index);
+                Picture picture = pictureManager.albumList[selectedAlbum].GetPictureFromAlbum(index);
 
                 var pictureBitmap = InitializePicture(picture.Url);
 
@@ -114,24 +148,26 @@ namespace FavoritePictures
 
         private void menuOpenFrom_Click(object sender, RoutedEventArgs e)
         {
-            pictureManager.ReadFromTxt();
-            PopulateList();
+            pictureManager.ReadAlbumsFromTxt();
+            PopulateAlbums();
         }
 
         private void menuSaveAs_Click(object sender, RoutedEventArgs e)
         {
-            pictureManager.SaveToTxt();
+            pictureManager.SaveAlbumToTxt();
         }
 
         private void menuNew_Click(object sender, RoutedEventArgs e)
         {
             lstPictures.Items.Clear();
+            lstAlbums.Items.Clear();
             txtDescription.Text = string.Empty;
             txtName.Text = string.Empty;
             txtDescription.Text = string.Empty;
             txtURL.Text = string.Empty;
             imgBox.Source = null;
             InitializeGUI();
+            pictureManager.ClearManager();
         }
 
         private void Exit_Click(object sender, RoutedEventArgs e)
@@ -139,17 +175,43 @@ namespace FavoritePictures
             this.Close();
         }
 
+        private void PopulateAlbums()
+        {
+            lstAlbums.Items.Clear();
+            for (int i = 0; i < pictureManager.albumList.Count; i++)
+            {
+                string albumName = pictureManager.albumList[i].AlbumName;
+
+            lstAlbums.Items.Add(albumName);
+            }
+
+            // when you click add album this needs to deselect all listboxes otherwise it will bug program
+            lstAlbums.SelectedIndex = -1;
+            lstPictures.SelectedIndex = -1;
+
+        }
+
+
         private void PopulateList()
         {
+            int selectedAlbum = lstAlbums.SelectedIndex;
+
             lstPictures.Items.Clear();
-            if (pictureManager.GetPictureListCount() > 0)
+            if (pictureManager.albumList.Count > 0 && CheckIndex(selectedAlbum))
             {
-                for (int i = 0; i < pictureManager.GetPictureListCount(); i++)
-                {
-                    Picture picture = pictureManager.GetPictureFromList(i);
+                for (int i = 0; i < pictureManager.albumList[selectedAlbum].GetPicturesCount(); i++)
+                {   
+                    Picture picture = pictureManager.GetPictureFromAlbum(selectedAlbum,i);
                     lstPictures.Items.Add(string.Format("{0,-15} {1,-30} {2,-30}", picture.Name, picture.Url, picture.Description));
                 }
             }
+        }
+
+        private bool CheckIndex(int index)
+        {
+            if (index > -1)
+                return true;
+            else return false;
         }
 
         private void radioFile_Checked(object sender, RoutedEventArgs e)
@@ -196,6 +258,8 @@ namespace FavoritePictures
                     string selectedFile = Path.GetFullPath(openFileDialog.FileName);
                     MessageBox.Show("You selected: " + selectedFile);
                     pictureManager.PathToFile = selectedFile;
+                    lblPath.Content = "File is saved in app";
+                    lblPath.Foreground = System.Windows.Media.Brushes.Green;
                 }
             }
 
@@ -203,12 +267,98 @@ namespace FavoritePictures
 
         private void Button_Delete_Click(object sender, RoutedEventArgs e)
         {
-            int index = lstPictures.SelectedIndex;
+            int selectedAlbum = lstAlbums.SelectedIndex;
+            int selectedPicture = lstPictures.SelectedIndex;
 
-                pictureManager.RemovePictureFromList(index);
+                pictureManager.RemovePictureFromAlbum(selectedAlbum,selectedPicture);
                 imgBox.Source = null;
                 PopulateList();
+        }
+
+        private void btnAddAlbumName_Click(object sender, RoutedEventArgs e)
+        {
+            if(!string.IsNullOrEmpty(txtAlbumName.Text))
+            {
+                Album album = new Album()
+                {
+                    AlbumName = txtAlbumName.Text
+                };
+                pictureManager.albumList.Add(album);
+                PopulateAlbums();
+                txtAlbumName.Text = string.Empty;
+            }
+            else
+            {
+                MessageBox.Show("Album name cant be empty! Its not fun when you cant categorize your pictures! Remember to always organize your files!");
+            }
+        }
+
+        private void cmbAlbum_DropDownOpened(object sender, EventArgs e)
+        {
+            cmbAlbum.Items.Clear();
+            var listOfAlbums = pictureManager.albumList.Count;
+            if (listOfAlbums > 0)
+                for (int i = 0; i < listOfAlbums; i++)
+                {
+                    cmbAlbum.Items.Add(pictureManager.albumList[i].AlbumName);
+                }
 
         }
+
+        private void lstAlbums_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // this unselects the item in the first listbox with pictures
+            lstPictures.SelectedIndex = -1;
+            // when album is changed the picture is hidden
+            imgBox.Source = null;
+
+            PopulateList();
+        }
+
+        private void ClearInputs()
+        {
+            txtAlbumName.Text = string.Empty;
+            txtDescription.Text = string.Empty;
+            txtName.Text = string.Empty;
+            txtURL.Text = string.Empty;
+
+            // setting the saved path to file in manager to empty string
+            pictureManager.PathToFile = string.Empty;
+            lblPath.Content = string.Empty;
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((e.Key == Key.N) &&
+                (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
+            {
+                MessageBox.Show("You pressed Ctrl+n so the app was cleaned!");
+
+                menuNew_Click(sender, e);
+            }
+
+        }
+
+        private void btnDeleteAlbum_Click(object sender, RoutedEventArgs e)
+        {
+            int selectedAlbum = lstAlbums.SelectedIndex;
+
+            if (CheckIndex(selectedAlbum))
+            {
+                string message = "Do you want to delete album named: " + lstAlbums.SelectedItem.ToString() + "\n This action cannot be undone!";
+
+                ConfirmationWindow confirmationWindow = new ConfirmationWindow(message);
+                confirmationWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                confirmationWindow.ShowDialog();
+
+                if (confirmationWindow.DialogResult == true)
+                {
+                    pictureManager.RemoveAlbum(selectedAlbum);
+                    PopulateAlbums();
+                }
+            }
+        }
     }
+    
 }
+
